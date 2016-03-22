@@ -2,11 +2,12 @@
 # -*- coding: UTF-8 -*-
 # -*- coding: utf-8 -*-
 
-__author__ = 'Seijas'
-
 from gi.repository import Gtk
 import sqlite3 as dbapi
 from panel import Panel
+
+__author__ = 'Seijas'
+
 
 class Login:
 
@@ -40,7 +41,7 @@ class Login:
         for result in self.cursor:
             if result[1] == password:
                 self.window.set_visible(False)
-                Panel()
+                Panel(user)
             else:
                 self.error.set_text("Datos Incorrectos")
         self.error.set_text("Usuario no encontrado")
