@@ -4,7 +4,7 @@
 
 __author__ = 'Seijas'
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import sqlite3 as dbapi
 
 
@@ -13,7 +13,7 @@ class Panel:
     db = dbapi.connect("database.db")
     cursor = db.cursor()
 
-    def __init__(self):
+    def __init__(self, user):
         file = "./views/panel.glade"
         builder = Gtk.Builder()
         builder.add_from_file(file)
@@ -35,6 +35,7 @@ class Panel:
         self.b_buscar = builder.get_object("button_buscar")
         self.view = builder.get_object("students")
         self.error = builder.get_object("label_error")
+        self.menu_bar = builder.get_object("menu_bar")
 
         render = Gtk.CellRendererText()
 
@@ -46,7 +47,52 @@ class Panel:
         self.view.append_column(columna2)
         self.view.append_column(columna3)
 
+        self.menu_bar.set_hexpand(True)
+
+        menuitem = Gtk.MenuItem(label="File")
+        self.menu_bar.append(menuitem)
+        menu = Gtk.Menu()
+        menuitem.set_submenu(menu)
+        menuitem = Gtk.MenuItem(label="Said 'Hola'")
+        menuitem.connect_object("activate", self.menu_warning, ["Seijas Academy", "Hello " + user + "!"])
+        menu.append(menuitem)
+        menuitem = Gtk.SeparatorMenuItem()
+        menu.append(menuitem)
+        menuitem = Gtk.MenuItem(label="Close Session")
+        menu.append(menuitem)
+        menuitem = Gtk.MenuItem(label="Exit")
+        menu.append(menuitem)
+
+        menuitem = Gtk.MenuItem(label="Informes")
+        self.menu_bar.append(menuitem)
+        menu = Gtk.Menu()
+        menuitem.set_submenu(menu)
+        menuitem = Gtk.MenuItem(label="MenuItem")
+        menu.append(menuitem)
+
+        menuitem = Gtk.MenuItem(label="Ayuda")
+        self.menu_bar.append(menuitem)
+        menu = Gtk.Menu()
+        menuitem.set_submenu(menu)
+        menuitem = Gtk.MenuItem(label="Acerca de")
+        menuitem.connect_object("activate", self.menu_warning, ["Acerca de...", "Created by Seijas"])
+        menu.append(menuitem)
+
+        self.menu_bar.show_all()
+
         self.update_list()
+
+    def menu_warning(self, text):
+        window = Gtk.Window(title=text[0])
+        label = Gtk.Label(text[1])
+        label.set_padding(100, 30)
+        window.add(label)
+        window.connect("delete-event", self.close)
+        window.set_position(Gtk.PositionType.RIGHT)
+        window.show_all()
+
+    def close(self, widget, none):
+        widget.destroy()
 
     def update_list(self):
         lista = Gtk.ListStore(str, str, int)
@@ -202,3 +248,7 @@ class Panel:
         self.view.set_model(lista)
         self.view.show()
         self.clean_inserts()
+
+
+Panel("Seijas")
+Gtk.main()
