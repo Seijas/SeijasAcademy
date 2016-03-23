@@ -2,10 +2,10 @@
 # -*- coding: UTF-8 -*-
 # -*- coding: utf-8 -*-
 
-__author__ = 'Seijas'
-
 from gi.repository import Gtk, Gdk
 import sqlite3 as dbapi
+
+__author__ = 'Seijas'
 
 
 class Panel:
@@ -58,16 +58,20 @@ class Panel:
         menu.append(menuitem)
         menuitem = Gtk.SeparatorMenuItem()
         menu.append(menuitem)
-        menuitem = Gtk.MenuItem(label="Close Session")
-        menu.append(menuitem)
+        # menuitem = Gtk.MenuItem(label="Close Session")
+        # menuitem.connect_object("activate", self.menu_close_session(self), None)
+        # menu.append(menuitem)
         menuitem = Gtk.MenuItem(label="Exit")
+        menuitem.connect_object("activate", Gtk.main_quit, "close")
         menu.append(menuitem)
 
         menuitem = Gtk.MenuItem(label="Informes")
         self.menu_bar.append(menuitem)
         menu = Gtk.Menu()
         menuitem.set_submenu(menu)
-        menuitem = Gtk.MenuItem(label="MenuItem")
+        menuitem = Gtk.MenuItem(label="new registration")
+        menu.append(menuitem)
+        menuitem = Gtk.MenuItem(label="monthly bill")
         menu.append(menuitem)
 
         menuitem = Gtk.MenuItem(label="Ayuda")
@@ -93,6 +97,11 @@ class Panel:
 
     def close(self, widget, none):
         widget.destroy()
+
+    def menu_close_session(self, control):
+        Gtk.main_quit
+        from main import Login
+        Login()
 
     def update_list(self):
         lista = Gtk.ListStore(str, str, int)
