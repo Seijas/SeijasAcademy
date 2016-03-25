@@ -4,6 +4,7 @@
 
 from gi.repository import Gtk, Gdk
 import sqlite3 as dbapi
+from informes import Informes
 
 __author__ = 'Seijas'
 
@@ -70,8 +71,10 @@ class Panel:
         menu = Gtk.Menu()
         menuitem.set_submenu(menu)
         menuitem = Gtk.MenuItem(label="new registration")
+        menuitem.connect_object("activate", self.print_new_registration, None)
         menu.append(menuitem)
         menuitem = Gtk.MenuItem(label="monthly bill")
+        menuitem.connect_object("activate", self.print_monthly_bill, None)
         menu.append(menuitem)
 
         menuitem = Gtk.MenuItem(label="Ayuda")
@@ -102,6 +105,14 @@ class Panel:
         Gtk.main_quit
         from main import Login
         Login()
+
+    @staticmethod
+    def print_new_registration(control):
+        Informes(1)
+
+    @staticmethod
+    def print_monthly_bill(control):
+        Informes(0)
 
     def update_list(self):
         lista = Gtk.ListStore(str, str, int)
