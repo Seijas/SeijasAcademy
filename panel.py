@@ -13,6 +13,7 @@ class Panel:
 
     db = dbapi.connect("database.db")
     cursor = db.cursor()
+    last_id = 0
 
     def __init__(self, user):
         file = "./views/panel.glade"
@@ -59,9 +60,6 @@ class Panel:
         menu.append(menuitem)
         menuitem = Gtk.SeparatorMenuItem()
         menu.append(menuitem)
-        # menuitem = Gtk.MenuItem(label="Close Session")
-        # menuitem.connect_object("activate", self.menu_close_session(self), None)
-        # menu.append(menuitem)
         menuitem = Gtk.MenuItem(label="Exit")
         menuitem.connect_object("activate", Gtk.main_quit, "close")
         menu.append(menuitem)
@@ -88,6 +86,12 @@ class Panel:
         self.menu_bar.show_all()
 
         self.update_list()
+        self.view.get_selection().connect("changed", self.on_changed)
+
+    def on_changed(self, selection):
+        (model, iter) = selection.get_selected()
+        self.last_id = model[iter][0]
+        return True
 
     def menu_warning(self, text):
         window = Gtk.Window(title=text[0])
@@ -108,11 +112,10 @@ class Panel:
 
     @staticmethod
     def print_new_registration(control):
-        Informes(1)
+        Informes(1, control)
 
-    @staticmethod
-    def print_monthly_bill(control):
-        Informes(0)
+    def print_monthly_bill(self, control):
+        Informes(0, self.last_id)
 
     def update_list(self):
         lista = Gtk.ListStore(str, str, int)
@@ -268,7 +271,3 @@ class Panel:
         self.view.set_model(lista)
         self.view.show()
         self.clean_inserts()
-
-
-Panel("Seijas")
-Gtk.main()
