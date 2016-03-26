@@ -17,7 +17,8 @@ class Informes:
         if option:
             self.new_registration()
         else:
-            self.monthly_bill(id)
+            if id != 0:
+                self.monthly_bill(id)
 
     @staticmethod
     def new_registration():
@@ -69,7 +70,7 @@ class Informes:
         for fila in cursor:
             student = str(fila[0]), str(fila[1]), int(fila[2])
 
-        bill_name = "monthly_bill_" + student[1] + ".pdf"
+        bill_name = "monthly_bill_" + student[1].split()[1].strip() + ".pdf"
         doc = SimpleDocTemplate(bill_name, pagesize=A5,
                                                     rightMargin=72,
                                                     leftMargin=72,
