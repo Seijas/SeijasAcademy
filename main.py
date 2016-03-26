@@ -34,6 +34,7 @@ class Login:
 
     def button_login(self, control):
         self.error.set_text("")
+        writter = 1
         user = self.user.get_text()
         password = self.password.get_text()
 
@@ -44,7 +45,9 @@ class Login:
                 Panel(user)
             else:
                 self.error.set_text("Datos Incorrectos")
-        self.error.set_text("Usuario no encontrado")
+                writter = 0
+        if writter:
+            self.error.set_text("Usuario no encontrado")
 
 Login()
 Gtk.main()
