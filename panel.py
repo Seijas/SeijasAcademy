@@ -10,12 +10,24 @@ __author__ = 'Seijas'
 
 
 class Panel:
+    """ Clase Panel
+    clase principal que visualiza el usuario con todos los datos necesarios para la administracion de la cademia
+    Esta clase se conecta a la base de datos para aministrar la academia, buscando, insertando, borrando los
+    estudiantes que se registren a traves de formularios generados con el propio software
+    """
 
     db = dbapi.connect("database.db")
     cursor = db.cursor()
     last_id = 0
 
     def __init__(self, user):
+        """ metodo __init__
+        Construcotr de la clase que hace visualizar la interfaz realizada con glade
+        añadimos las señales definiendolas en el parametro signals y se lo añadimos al builder
+        por ultimo, traemos los objetos del xml que usemos
+        :param user: usuario que con el que se ha aceptado la entrada
+        """
+
         file = "./views/panel.glade"
         builder = Gtk.Builder()
         builder.add_from_file(file)
@@ -89,11 +101,21 @@ class Panel:
         self.view.get_selection().connect("changed", self.on_changed)
 
     def on_changed(self, selection):
+        """ metodo on_changed
+        metodo para detectar los cambios de selecion en el treeview
+        :param selection: parametro con la fila del treeview selecionada
+        :return: retorna la id del elemento selecionado en la variable de clase last_id
+        """
         (model, iter) = selection.get_selected()
         self.last_id = model[iter][0]
         return True
 
     def menu_warning(self, text):
+        """ Metodo menu_warning
+        Metodo para crear menus emergentes completamente personalizados
+        :param text: tubla con disintos parametros texto
+        :return: retorna una ventana emergente con los textos dados en la tupla text
+        """
         window = Gtk.Window(title=text[0])
         label = Gtk.Label(text[1])
         label.set_padding(100, 30)
@@ -103,21 +125,36 @@ class Panel:
         window.show_all()
 
     def close(self, widget, none):
+        """ metodo close
+        Metodo para cerrar el widget abierto
+        :param widget: parametro imprescindible
+        :param none: parametro imprescindible, no lo suo
+        :return: detruye la ventana
+        """
         widget.destroy()
-
-    def menu_close_session(self, control):
-        Gtk.main_quit
-        from main import Login
-        Login()
 
     @staticmethod
     def print_new_registration(control):
+        """ metodo print_new_registration
+        imprime un pequeño formulario para que los estudiantes se registren en la academia a traves de papel
+        :param control: parametro para llevar el control del metodo
+        :return: retorna un informe
+        """
         Informes(1, control)
 
     def print_monthly_bill(self, control):
+        """ metodo print_monthly_bill
+        metodo para generar un informe si esta selecionado una fila en el treeview
+        :param control: parametro para llevar el control del metodo
+        :return: retorna un informe
+        """
         Informes(0, self.last_id)
 
     def update_list(self):
+        """ Metodo update_list
+        metodo para imprimir en el treeview con todos datos de la base de datos
+        :return: retorna un treeview
+        """
         lista = Gtk.ListStore(str, str, int)
         self.cursor.execute("select * from students order by id")
 
@@ -128,14 +165,29 @@ class Panel:
         self.view.show()
 
     def clean_inserts(self):
+        """ Metodo clean_inserts
+        Metodo para limpiar los tres text fields
+        :return: retorna los tres textfields en blanco
+        """
         self.ide.set_text("")
         self.nome.set_text("")
         self.idade.set_text("")
 
     def raise_error(self, string=""):
+        """ Metodo raise_error
+        metodo usado para insertar un string dado en el label con color rojo raise_error
+        :param string: Texto para introducir en el label
+        :return: retorna el label con el mensaje introducido
+        """
         self.error.set_text(string)
 
     def b_borrar(self, control):
+        """ Metodo borrar
+        dependiendo de los parametros que hayamos introducido en los textfields, borramos los elementos, o elemento
+        que coincida exactamente con lo deseado
+        :param control: parametro para llevar el control del metodo
+        :return: retorna la lista del treeview sin el elemento borrado
+        """
         self.raise_error()
         id = self.ide.get_text()
         name = self.nome.get_text()
@@ -172,6 +224,15 @@ class Panel:
         self.update_list()
 
     def b_insertar(self, control):
+        """ Metodo insertar
+        Lo primero es comprobar que no existe la id introducida, y en su defecto, guardar la ultima id para asignarsela
+        a la nueva inserción (si la id insertada manualmente ya existe se rompe el metodo despues de insertar
+        un aviso en el label
+        Si todo esta bien, dependiendo de los parametros que se hayan introducido en los treeview hacemos una insercion
+        u otra
+        :param control: parametros para llevar el control del metodo
+        :return: vuelve a retornar un treeview con todos los elementos de la base de datos
+        """
         id = self.ide.get_text()
         name = self.nome.get_text()
         age = self.idade.get_text()
@@ -227,6 +288,12 @@ class Panel:
             self.raise_error()
 
     def b_buscar(self, control):
+        """ Metodo buscar
+        Dependiendo del texto que rellenemos en los textfields hacemos un select u otro para mostrar los
+        resultados en el treeview
+        :param control: parametro para llevar control
+        :return: retorna la lista para el treeview con los parametros que coinciden en la base de datos
+        """
         self.raise_error()
         id = self.ide.get_text()
         name = self.nome.get_text()
