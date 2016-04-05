@@ -103,11 +103,20 @@ class Panel:
     def on_changed(self, selection):
         """ metodo on_changed
         metodo para detectar los cambios de selecion en el treeview
+        Asigna en los EditText los parametros correspondientes con el elemento selecionado
         :param selection: parametro con la fila del treeview selecionada
         :return: retorna la id del elemento selecionado en la variable de clase last_id
         """
-        (model, iter) = selection.get_selected()
-        self.last_id = model[iter][0]
+        try:
+            (model, iter) = selection.get_selected()
+            self.last_id = model[iter][0]
+
+            self.ide.set_text(model[iter][0])
+            self.nome.set_text(model[iter][1])
+            self.idade.set_text(str(model[iter][2]))
+        except:
+            self
+
         return True
 
     def menu_warning(self, text):
